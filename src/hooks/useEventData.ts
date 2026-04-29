@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/lib/firebase";
+import { 
+  collection, 
+  query, 
+  onSnapshot, 
+  orderBy, 
+  limit, 
+  where 
+} from "firebase/firestore";
 
 export type Booth = {
   id: string;
@@ -31,24 +39,21 @@ export function useBooths() {
   const [booths, setBooths] = useState<Booth[]>([]);
 
   useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const { data } = await supabase
-        .from("booths")
-        .select("*")
-        .order("status", { ascending: true })
-        .order("name", { ascending: true });
-      if (active && data) setBooths(data as Booth[]);
-    };
-    load();
-    const channel = supabase
-      .channel("booths-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "booths" }, load)
-      .subscribe();
-    return () => {
-      active = false;
-      supabase.removeChannel(channel);
-    };
+    const q = query(
+      collection(db, "booths"), 
+      orderBy("status", "asc"), 
+      orderBy("name", "asc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Booth[];
+      setBooths(data);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return booths;
@@ -58,24 +63,21 @@ export function useScores() {
   const [scores, setScores] = useState<Score[]>([]);
 
   useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const { data } = await supabase
-        .from("scores")
-        .select("*")
-        .order("score", { ascending: false })
-        .limit(50);
-      if (active && data) setScores(data as Score[]);
-    };
-    load();
-    const channel = supabase
-      .channel("scores-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "scores" }, load)
-      .subscribe();
-    return () => {
-      active = false;
-      supabase.removeChannel(channel);
-    };
+    const q = query(
+      collection(db, "scores"), 
+      orderBy("score", "desc"), 
+      limit(50)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Score[];
+      setScores(data);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return scores;
@@ -85,24 +87,21 @@ export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
-    let active = true;
-    const load = async () => {
-      const { data } = await supabase
-        .from("orders")
-        .select("*")
-        .in("status", ["preparing", "ready"])
-        .order("created_at", { ascending: true });
-      if (active && data) setOrders(data as Order[]);
-    };
-    load();
-    const channel = supabase
-      .channel("orders-rt")
-      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, load)
-      .subscribe();
-    return () => {
-      active = false;
-      supabase.removeChannel(channel);
-    };
+    const q = query(
+      collection(db, "orders"),
+      where("status", "in", ["preparing", "ready"]),
+      orderBy("created_at", "asc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Order[];
+      setOrders(data);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return orders;

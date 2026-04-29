@@ -3,10 +3,12 @@ import { ChefHat, CheckCircle2, Undo2, Clock } from "lucide-react";
 import { toast } from "sonner";
 import AdminNav from "@/components/AdminNav";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/lib/firebase";
+import { doc, updateDoc } from "firebase/firestore";
 import { useOrders } from "@/hooks/useEventData";
 
 const elapsed = (iso: string) => {
+  if (!iso) return "0:00";
   const ms = Date.now() - new Date(iso).getTime();
   const m = Math.floor(ms / 60000);
   const s = Math.floor((ms % 60000) / 1000);
@@ -21,25 +23,45 @@ const KitchenPanel = () => {
 
   const markReady = async (id: string, num: number) => {
     setBusy(id);
-    const { error } = await supabase
-      .from("orders")
-      .update({ status: "ready", ready_at: new Date().toISOString() })
-      .eq("id", id);
-    setBusy(null);
-    if (error) toast.error("Update failed");
-    else toast.success(`Order #${String(num).padStart(3, "0")} ready!`);
+    try {
+      await updateDoc(doc(db, "orders", id), {
+        status: "ready",
+        ready_at: new Date().toISOString()
+      });
+      toast.success(`Order #${String(num).padStart(3, "0")} ready!`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Update failed");
+    } finally {
+      setBusy(null);
+    }
   };
 
   const undo = async (id: string) => {
     setBusy(id);
-    await supabase.from("orders").update({ status: "preparing", ready_at: null }).eq("id", id);
-    setBusy(null);
+    try {
+      await updateDoc(doc(db, "orders", id), {
+        status: "preparing",
+        ready_at: null
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setBusy(null);
+    }
   };
 
   const complete = async (id: string) => {
     setBusy(id);
-    await supabase.from("orders").update({ status: "completed" }).eq("id", id);
-    setBusy(null);
+    try {
+      await updateDoc(doc(db, "orders", id), {
+        status: "completed"
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setBusy(null);
+    }
   };
 
   return (

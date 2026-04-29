@@ -5,7 +5,8 @@ import AdminNav from "@/components/AdminNav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "firebase/firestore";
 import { useOrders } from "@/hooks/useEventData";
 
 const OrderEntry = () => {
@@ -17,19 +18,34 @@ const OrderEntry = () => {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { data, error } = await supabase
-      .from("orders")
-      .insert({ customer_name: name.trim() || null, status: "preparing" })
-      .select()
-      .single();
-    setSubmitting(false);
-    if (error) {
+    
+    try {
+      // Get the last order number to increment it
+      const q = query(collection(db, "orders"), orderBy("order_number", "desc"), limit(1));
+      const querySnapshot = await getDocs(q);
+      let nextNumber = 1;
+      if (!querySnapshot.empty) {
+        nextNumber = (querySnapshot.docs[0].data().order_number || 0) + 1;
+      }
+
+      const orderData = {
+        customer_name: name.trim() || null,
+        status: "preparing",
+        order_number: nextNumber,
+        created_at: new Date().toISOString() // Using ISO string to match existing logic
+      };
+
+      await addDoc(collection(db, "orders"), orderData);
+      
+      setLastOrderNumber(nextNumber);
+      setName("");
+      toast.success(`Order #${String(nextNumber).padStart(3, "0")} created`);
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to create order");
-      return;
+    } finally {
+      setSubmitting(false);
     }
-    setLastOrderNumber(data!.order_number);
-    setName("");
-    toast.success(`Order #${String(data!.order_number).padStart(3, "0")} created`);
   };
 
   return (

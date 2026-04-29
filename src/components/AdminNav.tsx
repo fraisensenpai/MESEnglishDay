@@ -12,18 +12,17 @@ const links = [
 const AdminNav = () => {
   const { pathname } = useLocation();
   return (
-    <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 backdrop-blur-xl">
-      <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-neon-blue to-neon-purple text-primary-foreground font-black shadow-[var(--glow-blue)]">
-            E
+    <header className="sticky top-0 z-30 border-b border-white/5 bg-background/40 backdrop-blur-2xl">
+      <div className="container flex h-14 items-center justify-between px-4">
+        <Link to="/" className="flex flex-col group">
+          <div className="text-sm font-black tracking-tighter text-white uppercase group-hover:text-neon-blue transition-colors">
+            MES English Day
           </div>
-          <div className="leading-tight">
-            <div className="text-sm font-bold tracking-wide">MES ENGLISH DAY</div>
-            <div className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Control Center</div>
+          <div className="text-[8px] uppercase tracking-[0.4em] text-muted-foreground font-black -mt-0.5">
+            Admin · System
           </div>
         </Link>
-        <nav className="flex items-center gap-1">
+        <nav className="flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/10">
           {links.map(({ to, label, icon: Icon }) => {
             const active = pathname === to;
             return (
@@ -31,13 +30,13 @@ const AdminNav = () => {
                 key={to}
                 to={to}
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                  "flex items-center gap-2 rounded-full px-4 py-1 text-[9px] font-black uppercase tracking-wider transition-all",
                   active
-                    ? "bg-secondary text-foreground shadow-[var(--glow-blue)] border border-neon-blue/40"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/60"
+                    ? "bg-white text-background shadow-lg"
+                    : "text-white/40 hover:text-white hover:bg-white/5"
                 )}
               >
-                <Icon className="h-4 w-4" />
+                <Icon className={cn("h-3 w-3", active ? "text-background" : "text-white/40")} />
                 <span className="hidden sm:inline">{label}</span>
               </Link>
             );

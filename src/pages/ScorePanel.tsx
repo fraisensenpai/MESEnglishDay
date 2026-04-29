@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { supabase } from "@/integrations/supabase/client";
+import { db } from "@/lib/firebase";
+import { collection, addDoc } from "firebase/firestore";
 import { useBooths, useScores } from "@/hooks/useEventData";
 
 const ScorePanel = () => {
@@ -31,19 +32,22 @@ const ScorePanel = () => {
       return;
     }
     setBusy(true);
-    const { error } = await supabase.from("scores").insert({
-      student_name: student.trim(),
-      booth_name: booth,
-      score: parseInt(score, 10),
-    });
-    setBusy(false);
-    if (error) {
+    try {
+      await addDoc(collection(db, "scores"), {
+        student_name: student.trim(),
+        booth_name: booth,
+        score: parseInt(score, 10),
+        created_at: new Date().toISOString()
+      });
+      toast.success(`Score added for ${student}`);
+      setStudent("");
+      setScore("");
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to save score");
-      return;
+    } finally {
+      setBusy(false);
     }
-    toast.success(`Score added for ${student}`);
-    setStudent("");
-    setScore("");
   };
 
   return (
