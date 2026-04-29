@@ -66,17 +66,6 @@ export default {
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
-      colors: {
-        // extend with neon tokens
-        neon: {
-          blue: "hsl(var(--neon-blue))",
-          green: "hsl(var(--neon-green))",
-          purple: "hsl(var(--neon-purple))",
-          pink: "hsl(var(--neon-pink))",
-          orange: "hsl(var(--neon-orange))",
-          yellow: "hsl(var(--neon-yellow))",
-        },
-      } as any,
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
