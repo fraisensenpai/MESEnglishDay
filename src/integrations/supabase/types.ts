@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      booths: {
+        Row: {
+          created_at: string
+          icon: string
+          id: string
+          location: string
+          name: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          icon?: string
+          id?: string
+          location: string
+          name: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          icon?: string
+          id?: string
+          location?: string
+          name?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          id: string
+          order_number: number
+          ready_at: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          order_number?: number
+          ready_at?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          id?: string
+          order_number?: number
+          ready_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      scores: {
+        Row: {
+          booth_name: string
+          created_at: string
+          id: string
+          score: number
+          student_name: string
+        }
+        Insert: {
+          booth_name: string
+          created_at?: string
+          id?: string
+          score?: number
+          student_name: string
+        }
+        Update: {
+          booth_name?: string
+          created_at?: string
+          id?: string
+          score?: number
+          student_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
