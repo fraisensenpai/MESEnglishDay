@@ -15,6 +15,7 @@ import {
 import { db } from "@/lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { useBooths, useScores } from "@/hooks/useEventData";
+import Footer from "@/components/Footer";
 
 const ScorePanel = () => {
   const booths = useBooths();
@@ -132,6 +133,7 @@ const ScorePanel = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

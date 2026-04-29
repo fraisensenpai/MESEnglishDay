@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useOrders } from "@/hooks/useEventData";
+import Footer from "@/components/Footer";
 
 const elapsed = (iso: string) => {
   if (!iso) return "0:00";
@@ -147,6 +148,7 @@ const KitchenPanel = () => {
           </section>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

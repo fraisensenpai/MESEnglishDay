@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Trophy, MapPin, Flame, ChefHat, Bell, Sparkles, Settings, ExternalLink } from "lucide-react";
 import { useBooths, useOrders, useScores } from "@/hooks/useEventData";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 const formatClock = (d: Date) =>
   d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
@@ -274,6 +275,7 @@ const Dashboard = () => {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

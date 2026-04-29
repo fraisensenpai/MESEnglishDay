@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Monitor, ClipboardList, ChefHat, Trophy } from "lucide-react";
+import { Monitor, ClipboardList, ChefHat, Trophy, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -7,6 +7,7 @@ const links = [
   { to: "/order-entry", label: "Order Entry", icon: ClipboardList },
   { to: "/kitchen-panel", label: "Kitchen", icon: ChefHat },
   { to: "/score-panel", label: "Scores", icon: Trophy },
+  { to: "/booth-management", label: "Events", icon: Sparkles },
 ];
 
 const AdminNav = () => {
